@@ -1,0 +1,5 @@
+# This file tells git what files to ignore when pushing online
+
+__pycache__
+.venv
+.env

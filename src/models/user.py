@@ -6,7 +6,7 @@ class User(db.Model):
 
     # attributes of the table
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String)
+    username = db.Column(db.String, nullable=False)
     password = db.Column(db.String, nullable=False)
     role = db.Column(db.String, nullable=False)
     is_admin = db.Column(db.Boolean, default=False)

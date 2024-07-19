@@ -4,6 +4,7 @@ from flask import Blueprint
 
 from init import db, bcrypt
 from models.user import User
+from models.fishtank import Tank
 
 db_commands = Blueprint("db", __name__)
 
@@ -36,6 +37,35 @@ def seed_tables():
     ]
 
     db.session.add_all(users)
+
+    fishtank = [
+        Tank(
+            tank_name="Australian Local Freshwater Fish",
+            ideal_parameters="pH: 7, Ammonia: 0ppm, Nitrate: 0.20ppm, GH: 3-4 drops",
+            room_location="Living room",
+            user=users[0] # this makes the first User in the seed which is the 'aquariumadmin', the creator of the 'fishtank'.
+        ),
+        Tank(
+            tank_name="Australian North Queensland Freshwater Fish",
+            ideal_parameters="pH: 6-7.5, Ammonia: 0ppm, Nitrate: 0.20ppm, GH: 3 drops",
+            room_location="Living room",
+            user=users[0]
+        ),
+        Tank(
+            tank_name="Australian Northbrook Creek Freshwater Fish",
+            ideal_parameters="pH: 6-7.5, Ammonia: 0ppm, Nitrate: 0.10ppm, GH: 2 drops",
+            room_location="Garage",
+            user=users[1]
+        ),
+        Tank(
+            tank_name="Australian Tin Can Bay Freshwater Fish",
+            ideal_parameters="pH: 6-6.5, Ammonia: 0ppm, Nitrate: 0.10ppm, GH: 2 drops",
+            room_location="Garage",
+            user=users[1]
+        )
+    ]
+
+    db.session.add_all(fishtank)
 
     db.session.commit()
 

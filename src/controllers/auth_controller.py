@@ -55,7 +55,7 @@ def login_user():
     # if user exists and password is correct
     if user and bcrypt.check_password_hash(user.password, body_data.get("password")):
         # create jwt
-        token = create_access_token(identity=str(user.id), expires_delta=timedelta(days=1)) # This will create the token and also set expiry of 1 day (24hrs).
+        token = create_access_token(identity=str(user.id), expires_delta=timedelta(days=1)) # This will create the token and set expiry of the token as 1 day (24hrs).
         # respond back
         return {"username": user.username, "is_admin": user.is_admin, "token": token}
     

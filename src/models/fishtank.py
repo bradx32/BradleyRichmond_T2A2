@@ -8,6 +8,8 @@ class Tank(db.Model):
     tank_name = db.Column(db.String, nullable=False)
     ideal_parameters = db.Column(db.String)
     room_location = db.Column(db.String)
+    # date = db.Column(db.Date) # new addition
+
 
     # Foreign Key 
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) # This connects as a FK to the "users" table name from the user.py __tablename__ "users"
@@ -21,7 +23,7 @@ class TankSchema(ma.Schema):
     user = fields.Nested("UserSchema", only=["id", "username"] )
 
     class Meta:
-        fields = ("tank_id", "tank_name" "ideal_parameters", "room_location", "created_by")
+        fields = ("tank_id", "tank_name", "ideal_parameters", "room_location", "created_by")
 
 tank_schema = TankSchema()
 tanks_schema = TankSchema(many=True)

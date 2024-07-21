@@ -1,4 +1,5 @@
 from init import db, ma
+from marshmallow import fields
 
 class User(db.Model):
     # name of the table
@@ -11,15 +12,20 @@ class User(db.Model):
     role = db.Column(db.String, nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
+    # Foreign Key relationship bonding
+    fishtanks = db.relationship('Tank', back_populates="user") # needs to have matching names with the same fields in fishtank.py, class Tank.
+
 
 class UserSchema(ma.Schema):
+    # fishtank = fields.List(fields.Nested("TankSchema", exclude=["user"]))
+
     class Meta:
-        fields = ("id", "username", "password", "role", "is_admin")
+        fields = ("id", "username", "role", "is_admin")
 
 
 
 # to handle a single user object
-user_schema = UserSchema(exclude=["password"])
+user_schema = UserSchema()
 
 # to handle a list of user objects
-users_schema = UserSchema(many=True, exclude=["password"])
+users_schema = UserSchema(many=True)

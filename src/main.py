@@ -24,4 +24,7 @@ def create_app():
     from controllers.auth_controller import auth_bp
     app.register_blueprint(auth_bp)
 
+    from controllers.fishtank_controller import fishtanks_bp
+    app.register_blueprint(fishtanks_bp)
+
     return app

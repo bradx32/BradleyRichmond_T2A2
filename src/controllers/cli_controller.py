@@ -1,4 +1,5 @@
 # CommandLineInterface_controllers
+from datetime import date
 
 from flask import Blueprint
 
@@ -67,6 +68,27 @@ def seed_tables():
     ]
 
     db.session.add_all(fishtank)
+
+    db.session.commit()
+
+    maintenance = [
+        MLog(
+            description="Tank cleaned and water tested",
+            notes="Results of tests: pH: 7.0, Ammonia: 0.05ppm",
+            date=date.today(),
+            user=users[1],
+            tank=fishtank[0]
+        ),
+        MLog(
+            description="Protein feed",
+            notes="1 x Bloodworms Block, all fish fed",
+            date=date.today(),
+            user=users[0],
+            tank=fishtank[1]
+        ),
+    ]
+
+    db.session.add_all(maintenance)
 
     db.session.commit()
 

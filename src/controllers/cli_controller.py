@@ -5,6 +5,7 @@ from flask import Blueprint
 from init import db, bcrypt
 from models.user import User
 from models.fishtank import Tank
+from models.maintenance_log import MLog
 
 db_commands = Blueprint("db", __name__)
 

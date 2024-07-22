@@ -17,7 +17,7 @@ fishtanks_bp = Blueprint("fishtank", __name__, url_prefix="/fishtanks")
 # /fishtanks - GET - fetch all fishtanks
 @fishtanks_bp.route("/")
 def get_all_fishtanks():
-    stmt = db.select(Tank) #.order_by(Tank.date.desc()) - To order by date. Delete comment once date is added.
+    stmt = db.select(Tank).order_by(Tank.date.desc()) # To order by date. Delete comment once date is added.
     fishtanks = db.session.scalars(stmt)
     return tanks_schema.dump(fishtanks)
 
@@ -42,7 +42,7 @@ def create_fishtank():
         tank_name=body_data.get("tank_name"),
         ideal_parameters=body_data.get("ideal_parameters"),
         room_location=body_data.get("room_location"),
-        # date=date.today(), # new addition: delete if errors
+        date=date.today(),
         created_by=get_jwt_identity()
     )
     # add and commit to DB

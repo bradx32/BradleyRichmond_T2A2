@@ -5,8 +5,10 @@ from flask import Blueprint, request
 from init import db
 from models.fishtank import Tank, tank_schema, tanks_schema
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from controllers.maintenance_controller import maintenance_bp
 
 fishtanks_bp = Blueprint("fishtank", __name__, url_prefix="/fishtanks")
+fishtanks_bp.register_blueprint(maintenance_bp, url_prefix="/<int:tank_id>/maintenance")
 
 # /fishtanks - GET - fetch all fishtanks
 # /fishtank/<id> - GET - fetch a single fishtank
@@ -21,7 +23,7 @@ def get_all_fishtanks():
     fishtanks = db.session.scalars(stmt)
     return tanks_schema.dump(fishtanks)
 
-# /cards/<id> - GET - fetch a single card
+# /cards/<id> - GET - fetch a single fishtank
 @fishtanks_bp.route("/<int:tank_id>")
 def get_fishtank(tank_id):
     stmt = db.select(Tank).filter_by(tank_id=tank_id)

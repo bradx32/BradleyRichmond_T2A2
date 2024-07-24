@@ -18,10 +18,11 @@ class MLog(db.Model):
 
 class MLogSchema(ma.Schema):
     user = fields.Nested("UserSchema", only=["id", "username"])
-    fishtank = fields.Nested("TankSchema", exclude=["mlogs"])
+    tank = fields.Nested("TankSchema", exclude=["mlogs"])
 
     class Meta:
-        fields = ("log_id", "description", "notes", "date", "tank_id", "performed_by")
+        fields = ("log_id", "description", "notes", "date", "tank", "performed_by")
+        ordered = True # ensures data fields are in the above order ^
 
 mlog_schema = MLogSchema()
 mlogs_schema = MLogSchema(many=True)

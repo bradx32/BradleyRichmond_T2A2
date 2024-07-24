@@ -23,10 +23,10 @@ class Tank(db.Model):
 class TankSchema(ma.Schema):
 
     user = fields.Nested("UserSchema", only=["id", "username"])
-    mlogs = fields.List(fields.Nested("MLogSchema", exclude=["tank"]))
+    mlogs = fields.List(fields.Nested("MLogSchema", exclude=["tank"])) # Excludes tank to prevent loop
 
     class Meta:
-        fields = ("tank_id", "tank_name", "ideal_parameters", "room_location", "created_by", "date")
+        fields = ("tank_id", "tank_name", "ideal_parameters", "room_location", "created_by", "date", "mlogs")
         ordered = True # ensures data fields are in the above order ^
 
 tank_schema = TankSchema()

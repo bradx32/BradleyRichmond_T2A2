@@ -5,8 +5,10 @@ from flask import Blueprint, request
 from init import db
 from models.fishtank import Tank, tank_schema, tanks_schema
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from controllers.maintenance_controller import maintenance_bp
 
 fishtanks_bp = Blueprint("fishtank", __name__, url_prefix="/fishtanks")
+fishtanks_bp.register_blueprint(maintenance_bp, url_prefix="/<int:tank_id>/maintenance")
 
 # /fishtanks - GET - fetch all fishtanks
 # /fishtank/<id> - GET - fetch a single fishtank
@@ -17,11 +19,11 @@ fishtanks_bp = Blueprint("fishtank", __name__, url_prefix="/fishtanks")
 # /fishtanks - GET - fetch all fishtanks
 @fishtanks_bp.route("/")
 def get_all_fishtanks():
-    stmt = db.select(Tank) #.order_by(Tank.date.desc()) - To order by date. Delete comment once date is added.
+    stmt = db.select(Tank).order_by(Tank.date.desc()) # To order by date. Delete comment once date is added.
     fishtanks = db.session.scalars(stmt)
     return tanks_schema.dump(fishtanks)
 
-# /cards/<id> - GET - fetch a single card
+# /cards/<id> - GET - fetch a single fishtank
 @fishtanks_bp.route("/<int:tank_id>")
 def get_fishtank(tank_id):
     stmt = db.select(Tank).filter_by(tank_id=tank_id)
@@ -42,7 +44,7 @@ def create_fishtank():
         tank_name=body_data.get("tank_name"),
         ideal_parameters=body_data.get("ideal_parameters"),
         room_location=body_data.get("room_location"),
-        # date=date.today(), # new addition: delete if errors
+        date=date.today(),
         created_by=get_jwt_identity()
     )
     # add and commit to DB

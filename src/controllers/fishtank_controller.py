@@ -79,7 +79,7 @@ def delete_fishtank(tank_id):
 @jwt_required()
 def update_fishtank(tank_id):
     # get the data from the body of the request
-    body_data = request.get_json()
+    body_data = tank_schema.load(request.get_json(), partial=True)
     # get the tank from the database
     stmt = db.select(Tank).filter_by(tank_id=tank_id)
     tank = db.session.scalar(stmt)

@@ -64,7 +64,6 @@ def create_maintenance_log(tank_id):
     
 
 
-
 # /fishtanks/<int:tank_id>/maintenance/<int:log_id> - DELETE - delete a maintenance log
 @maintenance_bp.route("/<int:log_id>", methods=["DELETE"])
 @jwt_required()
@@ -82,8 +81,6 @@ def delete_maintenance_log(tank_id, log_id):
     else:
         # return error
         return {"error": f"Maintenance log with id {log_id} not found"}, 404
-
-
 
 
 
@@ -109,7 +106,7 @@ def update_maintenance_log(tank_id, log_id):
 
         # commit to the database
         db.session.commit()
-        
+
         # return a response
         return mlog_schema.dump(maintenance_log)
     else:

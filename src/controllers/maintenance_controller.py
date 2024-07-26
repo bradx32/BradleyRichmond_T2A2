@@ -29,8 +29,6 @@ def get_maintenance_log(log_id):
         return {"error": f"Maintenance log with id {log_id} not found"}, 404
 
 
-
-
 # /fishtanks/<int:tank_id>/maintenance - POST - create a new maintenance log
 @maintenance_bp.route("/", methods=["POST"])
 @jwt_required()
@@ -64,26 +62,6 @@ def create_maintenance_log(tank_id):
     
 
 
-# /fishtanks/<int:tank_id>/maintenance/<int:log_id> - DELETE - delete a maintenance log
-@maintenance_bp.route("/<int:log_id>", methods=["DELETE"])
-@jwt_required()
-def delete_maintenance_log(tank_id, log_id):
-    # fetch the maintenance log from the database
-    stmt = db.select(MLog).filter_by(log_id=log_id)
-    maintenance_log = db.session.scalar(stmt)
-    # if log exists
-    if maintenance_log:
-        # delete the maintenance log
-        db.session.delete(maintenance_log)
-        db.session.commit()
-        # return some message
-        return {"message": f"Maintenance log '{log_id}' deleted successfully"}
-    else:
-        # return error
-        return {"error": f"Maintenance log with id {log_id} not found"}, 404
-
-
-
 # /maintenance/<log_id> - PUT, PATCH - edit a maintenance log
 @maintenance_bp.route("/<int:log_id>", methods=["PUT", "PATCH"])
 @jwt_required()
@@ -111,4 +89,23 @@ def update_maintenance_log(tank_id, log_id):
         return mlog_schema.dump(maintenance_log)
     else:
         # return an error
+        return {"error": f"Maintenance log with id {log_id} not found"}, 404
+    
+
+    # /fishtanks/<int:tank_id>/maintenance/<int:log_id> - DELETE - delete a maintenance log
+@maintenance_bp.route("/<int:log_id>", methods=["DELETE"])
+@jwt_required()
+def delete_maintenance_log(tank_id, log_id):
+    # fetch the maintenance log from the database
+    stmt = db.select(MLog).filter_by(log_id=log_id)
+    maintenance_log = db.session.scalar(stmt)
+    # if log exists
+    if maintenance_log:
+        # delete the maintenance log
+        db.session.delete(maintenance_log)
+        db.session.commit()
+        # return some message
+        return {"message": f"Maintenance log '{log_id}' deleted successfully"}
+    else:
+        # return error
         return {"error": f"Maintenance log with id {log_id} not found"}, 404

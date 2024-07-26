@@ -34,4 +34,7 @@ def create_app():
     from controllers.fishtank_controller import fishtanks_bp
     app.register_blueprint(fishtanks_bp)
 
+    from controllers.fish_species_controller import fish_species_bp
+    app.register_blueprint(fish_species_bp)
+
     return app

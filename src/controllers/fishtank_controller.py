@@ -6,6 +6,7 @@ from init import db
 from models.fishtank import Tank, tank_schema, tanks_schema
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from controllers.maintenance_controller import maintenance_bp
+from utils import authorise_as_admin
 
 fishtanks_bp = Blueprint("fishtank", __name__, url_prefix="/fishtanks")
 fishtanks_bp.register_blueprint(maintenance_bp, url_prefix="/<int:tank_id>/maintenance")
@@ -51,18 +52,23 @@ def create_fishtank():
     db.session.add(new_tank)
     db.session.commit()
     # respond
-    return tank_schema.dump(new_tank), 201
+    return tank_schema.dump(new_tank)
 
 
 # /fishtanks/<id> - DELETE - delete a fishtank
 @fishtanks_bp.route("/<int:tank_id>", methods=["DELETE"])
 @jwt_required()
 def delete_fishtank(tank_id):
+    # check whether the user is an admin or not
+    if not authorise_as_admin():
+        return {"error": "Only an admin can perform this action."}, 403
+    
     # fetch the fishtank from the database
     stmt = db.select(Tank).filter_by(tank_id=tank_id)
     tank = db.session.scalar(stmt)
     # if tank    
     if tank:
+
         # delete the fishtank
         db.session.delete(tank)
         db.session.commit()
@@ -98,3 +104,4 @@ def update_fishtank(tank_id):
     else:
         # return an error
         return {"error": f"Fishtank with id {tank_id} not found"}, 404
+    

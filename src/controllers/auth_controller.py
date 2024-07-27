@@ -93,7 +93,7 @@ def update_user(user_id):
 
 
 
-    # /auth/<username> - DELETE - delete a user and requires admin
+# /auth/<username> - DELETE - delete a user and requires admin
 @auth_bp.route("/<username>", methods=["DELETE"])
 @jwt_required()
 def delete_user(username):

@@ -5,7 +5,6 @@ from marshmallow import fields, validates
 from marshmallow.validate import Length, And, Regexp, OneOf # Regexp (regular expression), very handy tool for validation.
 from marshmallow.exceptions import ValidationError
 
-# VALID_PARAMETERS = ( "pH", "Ammonia", "Nitrite", "Nitrate", "GH", "KH") - Maybe delete as not needed anymore. See TankSchema
 
 class Tank(db.Model):
     __tablename__ = "fishtank"

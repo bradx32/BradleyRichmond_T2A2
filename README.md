@@ -305,7 +305,27 @@ db.session.commit()
 ## R6 Design an entity relationship diagram (ERD) for this app’s database, and explain how the relations between the diagrammed models will aid the database design. 
 ### This should focus on the database design BEFORE coding has begun, eg. during the project planning or design phase.
 
+#### The Entity Relationship Diagram (ERD), was created at the beginning of the project to visualise and show the different relationships of the Entity tables (User, Fishtank, FishSpecies and MaintenanceLog), their attributes and relationships which have aided in 
 
+#### Clarifying Data Structure:
+- Shows entities, attributes, primary keys, and foreign keys. Showing via crowsfoot notation of how tables relate to each other.
+
+#### Enforcing Data Integrity:
+- Ensures valid relationships through foreign key constraints. Prevents anomalies with validation rules like unique and not null constraints.
+
+#### Facilitating Efficient Queries:
+- Guides optimised join queries and indexing strategies, enhancing data retrieval efficiency.
+
+#### Enhancing Maintainability and Scalability:
+- Allows modular design and easy updates/extensions which ensures consistent schema's for easier maintenance.
+
+#### Supporting Business Logic:
+- Guides CRUD operations and ensures data integrity during user actions such as deleting a tank.
+
+#### Examples:
+- User and MaintenanceLog: Tracks which user performed which maintenance tasks.
+- Tank and FishSpecies: Organises fish species within tanks, avoiding species hybrid breeding.
+- Tank and MaintenanceLog: Maintains a proper maintenance history for each tank.
 
 ![Aquarium_API_ERD](docs/ERD/Aquarium_API_ERD.jpg)
 
@@ -313,6 +333,98 @@ db.session.commit()
 ## R7 Explain the implemented models and their relationships, including how the relationships aid the database implementation.
 #### This should focus on the database implementation AFTER coding has begun, eg. during the project development phase.
 
+#### In this project, multiple models have been implemented to manage data related to fish species, tanks, users, and maintenance logs. The models and their relationships were carefully designed to ensure data integrity and efficient database operations during the projects development.
+
+#### The models and relationships:
+1. User Model
+- Attributes: id, username, password, is_admin
+- Relationships:
+    - One-to-Many with MaintenanceLog (a user can have multiple maintenance logs)
+    - One-to-Many with Tank (a user can own multiple tanks)
+
+2. Tank Model
+- Attributes: tank_id, tank_name, user_id (FK)
+- Relationships:
+    - Many-to-One with User (each tank belongs to one user)
+    - One-to-Many with FishSpecies (a tank can contain multiple fish species)
+    - One-to-Many with MaintenanceLog (a tank can have multiple maintenance logs)
+
+3. FishSpecies Model
+- Attributes: species_id, species_name, quantity, tank_id (FK)
+- Relationships:
+    - Many-to-One with Tank (each species belongs to one tank)
+
+4. MaintenanceLog Model
+- Attributes: log_id, date, details, user_id (FK), tank_id (FK)
+- Relationships:
+    - Many-to-One with User (each log is performed by one user)
+    - Many-to-One with Tank (each log is associated with one tank)
+
+
+### The back_populates parameter in SQLAlchemy is used to define bi-directional relationships between the tables, ensuring that each side of the relationship knows about the other side. This helps in linking tables and their foreign keys (FKs) together, allowing for efficient data retrieval and manipulation. 
+
+### Example from the project with the User and Tank models
+models/user.py
+```
+class User(db.Model):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, nullable=False, unique=True)
+    password = db.Column(db.String, nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+
+    tanks = db.relationship("Tank", back_populates="user")
+    maintenance_logs = db.relationship("MaintenanceLog", back_populates="user")
+```
+models/fishtank.py
+```
+class Tank(db.Model):
+    __tablename__ = "fishtank"
+    tank_id = db.Column(db.Integer, primary_key=True)
+    tank_name = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    user = db.relationship("User", back_populates="tanks")
+    fish_species = db.relationship("FishSpecies", back_populates="tank")
+    maintenance_logs = db.relationship("MaintenanceLog", back_populates="tank")
+```
+
+### Also used with the FishSpecies model and the Tank model (see above fish_species = db.relationship("FishSpecies", back_populates="tank"))
+
+models/fish_species.py
+```
+class FishSpecies(db.Model):
+    __tablename__ = "fishspecies"
+    species_id = db.Column(db.Integer, primary_key=True)
+    species_name = db.Column(db.String, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+    tank_id = db.Column(db.Integer, db.ForeignKey('fishtank.tank_id'), nullable=False)
+
+    tank = db.relationship("Tank", back_populates="fish_species")
+```
+
+
+### Linking the Tables and Foreign Keys
+#### Foreign Key Definition: In the Tank model, the user_id column is defined as a foreign key that references the id column in the User model:
+```
+user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+```
+
+### Bi-directional  (back_populates): The back_populates attribute is used in both models to define the relationship. In the User model, the tanks attribute indicates that a user can have multiple tanks. In the Tank model, the user attribute points back to the User model.
+User model
+```
+tanks = db.relationship("Tank", back_populates="user")
+```
+Tank model
+```
+user = db.relationship("User", back_populates="tanks")
+```
+Using back_populates helps define clear, bi-directional relationships between the models, in which:
+- Facilitates easier navigation and manipulation of the related data.
+- Maintains data integrity and consistency.
+- Simplifies complex queries by providing direct access to related objects.
+
+This relational mapping aids in efficient database implementation and management, especially during the project development phase.
 
 
 

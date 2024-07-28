@@ -1,5 +1,6 @@
 # BradleyRichmond_T2A2
-
+## Aquarium/Fishtank Management API
+## Github link: https://github.com/bradx32/BradleyRichmond_T2A2
 ### Requirements
 
 ## R1 Explain the problem that this app will solve, and explain how this app solves or addresses the problem.
@@ -38,38 +39,21 @@
 #### Trello has been used in the project to allocate and track tasks in the project. See the below screenshots for a snapshot of the progression and tasks planned for completion. The board is setup as a solo project although for a group it would have members assigned to different tasks, working on different branches and then pushing online, pulling to the main branch once approved. 
 
 #### Trello Home
-![Trello Board Home](Trello_Home.jpg)
+![Trello Board Home](docs/Trello/Trello_Home.jpg)
 #### Project Brief
-![Project Brief](Trello_brief.jpg)
+![Project Brief](docs/Trello/Trello_brief.jpg)
 #### Project ERD with 2nd image update as ERD progressed.
-![Project ERD](Trello_ERD.jpg)
+![Project ERD](docs/Trello/Trello_ERD.jpg)
 #### Completed Checklist 1
-![Checklist 1](Trello_Checklist1.jpg)
+![Checklist 1](docs/Trello/Trello_Checklist1.jpg)
 #### Models checklist
-![Models Checklist](Trello_models.jpg)
+![Models Checklist](docs/Trello/Trello_models.jpg)
 #### Controllers checklist
-![Controllers checklist](Trello_controllers.jpg)
+![Controllers checklist](docs/Trello/Trello_controllers.jpg)
 #### Controller CRUD operations
-![Controller CRUD](Trello_controller_CRUD.jpg)
+![Controller CRUD](docs/Trello/Trello_controller_CRUD.jpg)
 #### Authorisation and Validation
-![Auth & Validation](Trello_Auth_Validation.jpg)
-
-#### The tasks are allocated and tracked by a structured API system. Each task corresponding to a specific endpoint and operation such as the CRUD operations for records in the database. 
-
-#### Endpoints: Each task is assigned a specific endpoint in the API. For example, tasks related to managing users are handled by endpoints under /auth, while tasks related to fishtanks and fish species are managed under /fishtanks and /fishspecies.
-
-#### HTTP Methods: Tasks are tracked by the HTTP methods used in the endpoints. For example, GET requests are used to retrieve the data, POST requests to create new records in the database, PUT or PATCH requests to update existing records, and a DELETE requests to remove records.
-
-#### Blueprints and Routing: The project uses Flask Blueprints to organise related endpoints. For example, all of the authentication related tasks are grouped under the auth_bp Blueprint, which includes endpoints for users registration, login, and deletion.
-
-#### Database Interactions: Tasks interact with the database using SQLAlchemy. For example, creating a new user involves adding a record to the User table, while deleting a user involves removing a record from the same table. Each operation is contained in a function that handles the required database transaction and commits the update.
-
-#### Error Handling: The project includes error handling mechanisms to track and respond to issues. For example, attempts to create a user with a duplicate username are tracked and handled by checking for IntegrityError exceptions and returning appropriate error messages.
-
-#### JWT Authentication: Tasks related to user authentication and authorisation are tracked using JWT tokens. This ensures that only authorised users (admin user), can perform certain actions, such as deleting a user or accessing specific data.
-
-#### Validation and Security: Tasks also include validating input data and ensuring security. For example, user passwords are hashed before storage, and input data is validated using Marshmallow schemas to ensure it meets the required criteria.
-
+![Auth & Validation](docs/Trello/Trello_Auth_Validation.jpg)
 
 
 ## R3 List and explain the third-party services, packages and dependencies used in this app.
@@ -335,7 +319,7 @@ db.session.commit()
 
 #### In this project, multiple models have been implemented to manage data related to fish species, tanks, users, and maintenance logs. The models and their relationships were carefully designed to ensure data integrity and efficient database operations during the projects development.
 
-#### The models and relationships:
+#### The models and relationships (Use above ERD image for reference):
 1. User Model
 - Attributes: id, username, password, is_admin
 - Relationships:
@@ -435,35 +419,67 @@ This relational mapping aids in efficient database implementation and management
 - Any required body or header data
 - Response
  
+### API Endpoints:
+
+- Authentication
+    - POST Create or 'Register' a new user
+    - POST Create or 'Login' a user
+    - PUT/PATCH Update a user
+    - Delete a user (admin only)
+
+    ![Register](docs/Endpoints/Auth_register.jpg)
+
+    ![Login](docs/Endpoints/Auth_login.jpg)
+
+    ![Update](docs/Endpoints/Auth_update_user.jpg)
+
+    ![Delete](docs/Endpoints/Auth_delete_user.jpg)
+
+
+- Fishtank Endpoints:
+    - GET read all fishtanks
+    - GET read fishtank via id
+    - POST create a new fishtank
+    - PUT/PATCH update fishtank via id
+    - DELETE fishtank via id (admin only)
+
+    ![GET_All](docs/Endpoints/Fishtank_GET_All.jpg)
+
+    ![GET_via_id](docs/Endpoints/Fishtank_GET_via_id.jpg)
+
+    ![Create](docs/Endpoints/Fishtank_create.jpg)
+
+    ![Update_via_id](docs/Endpoints/Fishtank_Update_via_id.jpg)
+
+    ![Delete_via_id](docs/Endpoints/Fishtank_Delete_via_id.jpg)
+
+
+- FishSpecies Endpoints:
+    - POST create fish species
+    - GET read all fish species
+    - GET read fish species via id
+    - PUT/PATCH update fish species via id
+    - DELETE fish species via id (admin only)
+
+    ![Get_all](docs/Endpoints/FishSpecies_Get_All.jpg)
+
+    ![Get_via_id](docs/Endpoints/FishSpecies_Get_via_id.jpg)
+
+    ![Create](docs/Endpoints/FishSpecies_Create.jpg)
+
+    ![Update_via_id](docs/Endpoints/FishSpecies_Update_via_id.jpg)
+
+    ![Delete_via_id](docs/Endpoints/FishSpecies_Delete_via_id.jpg)
 
 
 
-Design Requirements
+- MaintenanceLog Endpoints:
+    - POST create a new maintenance log
+    - PUT/PATCH update a maintenance log
+    - DELETE maintenance log via id (admin only)
 
+    ![Create](docs/Endpoints/Maintenance_Create.jpg)
 
-The web server must:
-function as intended
-store data in a persistent data storage medium (eg. a relational database)
-appropriately validate & sanitise any data it interacts with
-use appropriate HTTP web request verbs - following REST conventions -  for various types of data manipulation 
-cover the full range of CRUD functionality for data within the database
-The database manipulated by the web server must accurately reflect the entity relationship diagram created for the Documentation Requirements.
-The database tables or documents must be normalised
-API endpoints must be documented in your readme
-Endpoint documentation should include
-HTTP request verbs
-Required data where applicable 
-Expected response data 
-Authentication methods where applicable
- 
+    ![Update](docs/Endpoints/Maintenance_Update.jpg)
 
-Code Requirements
-
-The web server must:
-use appropriate functionalities or libraries from the relevant programming language in its construction
-use appropriate model methods to query the database
-catch errors and handle them gracefully 
-returns appropriate error codes and messages to malformed requests
-use appropriate functions or methods to sanitise & validate data
-use D.R.Y coding principles
-All queries to the database must be commented with an explanation of how they work and the data they are intended to retrieve
+    ![Delete](docs/Endpoints/Maintenance_Delete.jpg)

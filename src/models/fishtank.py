@@ -41,7 +41,7 @@ class TankSchema(ma.Schema):
 
 
     class Meta:
-        fields = ("tank_id", "tank_name", "ideal_parameters", "room_location", "created_by", "date", "mlogs")
+        fields = ("tank_id", "tank_name", "ideal_parameters", "room_location", "created_by", "date", "mlogs") # adding fish_species is causing error. Unable to fix due to time constraints.
         ordered = True # ensures data fields are in the above order ^
 
 tank_schema = TankSchema()

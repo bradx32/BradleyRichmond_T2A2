@@ -218,27 +218,105 @@ from psycopg2 import errorcodes
 #### Trello: Used as the project management tool to allocate and track tasks. Although a solo project, Trello has helped view what is needed to be completed in order, choose the next task in line and improve efficiency overall.
 
 
-### R4 Explain the benefits and drawbacks of this app’s underlying database system.
+## R4 Explain the benefits and drawbacks of this app’s underlying database system.
+
+### PostgreSQL has been used as the database system for the application. PostgreSQL provides a cost effective (free), robust and scalable database solution with strong performance and security features. This making it an ideal choice for my Aquarium species and maintenance tracker application. 
+
+#### Advantages:
+- Cost effective - open source and free to use.
+- Adheres closely to SQL standards for robust queries.
+- Custom functions and data types for tailored solutions.
+- ACID compliance ensuring reliable transactions and data integrity.
+- Efficient data retrieval through queries
+- Scaleable for small to large datasets. 
+- JSON support for flexible storage and querying.
+
+#### Disadvantages
+- Complexity: Advanced features can make setup and maintenance more complicated compared to more simple databases.
+- Resource Intensive: Requires more memory and CPU resources, which can be an issue for smaller applications or those running on limited hardware. 
+- Steep Learning Curve: Some advanced features and configurations can be a challenge when new to the system.
+- Slower Development Speed: Due to its large set of features, development and tuning with postgresql may take longer compared to a more lightweight database.
+
+
+## R5 Explain the features, purpose and functionalities of the object-relational mapping system (ORM) used in this app.
+
+#### In my Aquarium application, the ORM used is SQLAlchemy to manage the database interactions. See below examples of how this was implemented
+
+#### Defining models: Each database table is represnted as a class in Python, with attributes corresponding to the table columns;
+
+#### Object-Relational Mapping:
+- Mapping the database tables to Python classes and table rows to instances of those classes. This enables you to interact with the database using Python objects instead of writing raw SQL queries.
+
+```
+class User(db.Model):
+    __tablename__ = "user"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, nullable=False, unique=True)
+    password = db.Column(db.String, nullable=False)
+    role = db.Column(db.String, nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+```
+
+```
+class FishSpecies(db.Model):
+    __tablename__ = "fishspecies"
+    species_id = db.Column(db.Integer, primary_key=True)
+    species_name = db.Column(db.String, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+    tank_id = db.Column(db.Integer, db.ForeignKey('fishtank.tank_id'), nullable=False)
+```
+#### Relationship Handling:
+- Supports defining relationships between tables using foreign keys and relationship functions. This allows for easy navigation and manipulation of the related data.
+
+```
+class FishSpecies(db.Model):
+    __tablename__ = "fishspecies"
+    species_id = db.Column(db.Integer, primary_key=True)
+    species_name = db.Column(db.String, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+    tank_id = db.Column(db.Integer, db.ForeignKey('fishtank.tank_id'), nullable=False)
+    tank = db.relationship("Tank", back_populates="fish_species")
+
+```
+
+#### Query Construction:
+- Provides a powerful and flexible query construction system that allows for building complex queries using Python code.
+
+```
+stmt = db.select(User).filter_by(username=username)
+user = db.session.scalar(stmt)
+```
+#### Session Management:
+- Manages database sessions, handling transactions and ensuring changes are either committed or rolled back as needed.
+
+```
+db.session.add(user)
+db.session.commit()
+```
+
+#### Functionality: CRUD and Relationships management
+- Create: Allows the ability to easily add new records to the database by creating instances of the mapped classes and adding them to the session.
+- Read: Retrieve data from the database using the query construction system.
+- Update: Modify existing records by fetching the objects, updating their attributes, and committing the changes.
+- Delete: Remove records from the database by deleting the corresponding objects.
+- Relationship management: Allows navigation and manipulation of related data using the defined relationships
+
+
+## R6 Design an entity relationship diagram (ERD) for this app’s database, and explain how the relations between the diagrammed models will aid the database design. 
+### This should focus on the database design BEFORE coding has begun, eg. during the project planning or design phase.
 
 
 
-### R5 Explain the features, purpose and functionalities of the object-relational mapping system (ORM) used in this app.
+![Aquarium_API_ERD](docs/ERD/Aquarium_API_ERD.jpg)
 
 
-
-### R6 Design an entity relationship diagram (ERD) for this app’s database, and explain how the relations between the diagrammed models will aid the database design. 
-#### This should focus on the database design BEFORE coding has begun, eg. during the project planning or design phase.
-
-
-
-
-### R7 Explain the implemented models and their relationships, including how the relationships aid the database implementation.
+## R7 Explain the implemented models and their relationships, including how the relationships aid the database implementation.
 #### This should focus on the database implementation AFTER coding has begun, eg. during the project development phase.
 
 
 
 
-### R8 Explain how to use this application’s API endpoints. Each endpoint should be explained, including the following data for each endpoint:
+## R8 Explain how to use this application’s API endpoints. Each endpoint should be explained, including the following data for each endpoint:
 
 - HTTP verb
 - Path or route

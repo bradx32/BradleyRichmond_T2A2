@@ -13,7 +13,6 @@ fish_species_bp = Blueprint("fish_species", __name__, url_prefix="/fish_species"
 
 # /fish_species - GET - all fish species
 @fish_species_bp.route("/")
-@jwt_required()
 def get_all_fish_species():
     stmt = db.select(FishSpecies)
     species = db.session.scalars(stmt).all()
@@ -21,7 +20,6 @@ def get_all_fish_species():
 
 # /fish_species/<id> - GET - fish species by id
 @fish_species_bp.route("/<int:species_id>")
-@jwt_required()
 def get_fish_species(species_id):
     stmt = db.select(FishSpecies).filter_by(species_id=species_id)
     species = db.session.scalar(stmt)
@@ -36,7 +34,12 @@ def get_fish_species(species_id):
 def create_fish_species():
     try:
         # get the data from the body of the request
-        body_data = fish_species_schema.load(request.get_json())
+        body_data = request.get_json()
+        tank_id = body_data.get("tank_id")
+        fish_species_schema.context["tank_id"] = tank_id
+
+        # load data with context
+        body_data = fish_species_schema.load(body_data)
 
         # create a new Tank model instance
         species = FishSpecies(
@@ -49,15 +52,15 @@ def create_fish_species():
         db.session.commit()
 
         # Return the newly created species data as a response
-        return fish_species_schema.dump(species)
-    
+        return fish_species_schema.dump(species), 201
+
     # Handle integrity errors if foreign key violation occurs
     except IntegrityError as err:
         # Check if the error is due to a foreign key violation
         if err.orig.pgcode == errorcodes.FOREIGN_KEY_VIOLATION:
             # Return a 409 'conflict' error with a message
             return {"error": f"Invalid foreign key value for tank_id: {body_data.get('tank_id')}"}, 409
-        
+
         # Handle any other types of integrity errors
         else:
             # Return a generic 500 Internal Server Error message
@@ -65,12 +68,18 @@ def create_fish_species():
 
 
 
-# /fish_species - PUT/PATCH - Update a fish species
+# /fish_species/<id> - PUT/PATCH - Update a fish species
 @fish_species_bp.route("/<int:species_id>", methods=["PUT", "PATCH"])
 @jwt_required()
 def update_fish_species(species_id):
     # get the data from the body of the request
-    body_data = fish_species_schema.load(request.get_json(), partial=True)
+    body_data = request.get_json()
+    
+    # Set the tank_id context for validation
+    fish_species_schema.context["tank_id"] = body_data.get("tank_id")
+
+    # Load the data with validation
+    body_data = fish_species_schema.load(body_data, partial=True)
 
     # get the fishspecies from the database
     stmt = db.select(FishSpecies).filter_by(species_id=species_id)

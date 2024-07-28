@@ -7,6 +7,7 @@ from init import db, bcrypt
 from models.user import User
 from models.fishtank import Tank
 from models.maintenance_log import MLog
+from models.fish_species import FishSpecies
 
 db_commands = Blueprint("db", __name__)
 
@@ -40,6 +41,7 @@ def seed_tables():
 
     db.session.add_all(users)
 
+    # Create a list of Tank instances
     fishtank = [
         Tank(
             tank_name="Australian Local Freshwater Fish",
@@ -71,6 +73,7 @@ def seed_tables():
 
     db.session.commit()
 
+    # Create a list of MLog instances
     maintenance = [
         MLog(
             description="Tank cleaned and water tested",
@@ -89,6 +92,24 @@ def seed_tables():
     ]
 
     db.session.add_all(maintenance)
+
+    db.session.commit()
+    
+    # Create a list of FishSpecies instances
+    fish_species = [
+        FishSpecies(
+            species_name="Crimson Spot Rainbow - Kangaroo Creek",
+            quantity=21,
+            tank_id=fishtank[0].tank_id
+        ),
+        FishSpecies(
+            species_name="Pacific Blue Eye - Coombabah Creek",
+            quantity=12,
+            tank_id=fishtank[1].tank_id
+        )
+    ]
+
+    db.session.add_all(fish_species)
 
     db.session.commit()
 

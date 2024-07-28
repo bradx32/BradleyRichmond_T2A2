@@ -2,7 +2,7 @@ from datetime import date
 
 from init import db, ma
 from marshmallow import fields, validates
-from marshmallow.validate import Length, And, Regexp, OneOf # Regexp (regular expression), very handy tool for validation.
+from marshmallow.validate import Length, And, Regexp # Regexp (regular expression), very handy tool for validation.
 from marshmallow.exceptions import ValidationError
 
 
@@ -28,6 +28,7 @@ class TankSchema(ma.Schema):
 
     user = fields.Nested("UserSchema", only=["id", "username"])
     mlogs = fields.List(fields.Nested("MLogSchema", exclude=["tank"])) # Excludes tank to prevent loop
+    fish_species = fields.List(fields.Nested("FishSpeciesSchema", exclude=["tank"]))
 
     tank_name = fields.String(required=True, validate=And(
         Length(min=2, error="Tank name must be atleast 2 characters long"),
@@ -38,7 +39,6 @@ class TankSchema(ma.Schema):
         Length(min=3, error="Ideal paramaters must be atleast 3 character long"), error="Ideal paramaters must have atleast 3 characters")
     )
 
-    # ideal_parameters = fields.String(validate=OneOf(VALID_PARAMETERS))
 
     class Meta:
         fields = ("tank_id", "tank_name", "ideal_parameters", "room_location", "created_by", "date", "mlogs")

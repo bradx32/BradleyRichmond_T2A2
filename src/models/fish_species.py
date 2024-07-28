@@ -1,7 +1,6 @@
 from init import db, ma
 from marshmallow import fields, validates, ValidationError
 from marshmallow.validate import Length, Range
-from models.fishtank import Tank
 
 class FishSpecies(db.Model):
     __tablename__ = "fishspecies"
@@ -22,15 +21,16 @@ class FishSpeciesSchema(ma.Schema):
     quantity = fields.Integer(required=True, validate=Range(min=1, error="Quantity must be at least 1"))
 
     @validates("species_name")
-    def validate_fish_species(self, value, **kwargs):
-        tank_id = kwargs.get('tank_id')
+    def validate_fish_species(self, value):
+        tank_id = self.context.get('tank_id')
         if not tank_id:
             raise ValidationError("Tank ID is required to validate fish species.")
-        # Check if the species already exists in the same tank
-        stmt = db.select(db.func.count()).select_from(FishSpecies).filter_by(species_name=value, tank_id=tank_id)
+        
+        # check whether there is an existing fish_species in other fishtanks
+        stmt = db.select(db.func.count()).select_from(FishSpecies).where(FishSpecies.tank_id == tank_id, FishSpecies.species_name == value)
         count = db.session.scalar(stmt)
         if count > 0:
-            raise ValidationError("This fish species already exists in the tank.")
+            raise ValidationError("You already have this fish species in the tank")
 
     class Meta:
         fields = ("species_id", "species_name", "quantity", "tank_id")
